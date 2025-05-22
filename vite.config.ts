@@ -5,6 +5,7 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  base: "/vertex-ui/", // ← REQUIRED for GitHub Pages project site
   server: {
     host: "::",
     port: 8080,
