@@ -1,1 +1,0 @@
-export const API_BASE: string = "https://37f3-102-90-80-14.ngrok-free.app";
