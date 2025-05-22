@@ -3,6 +3,7 @@ import { useState } from "react";
 import AssessmentForm from "@/components/AssessmentForm";
 import AssessmentResults from "@/components/AssessmentResults";
 import { toast } from "sonner";
+import { API_BASE } from "@/apiConfig";
 
 interface Metric {
   name: string;
@@ -26,43 +27,22 @@ const Index = () => {
   const generateAssessment = async (supplierID: string, need: string) => {
     setIsLoading(true);
     
-    // In a real implementation, this would be a fetch to your backend API
-    // For now, we'll simulate a response after a short delay
     try {
-      // Mock API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Real API call to your ngrok endpoint
+      const response = await fetch(`${API_BASE}/assess`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ supplier_id: supplierID, need: need }),
+      });
       
-      // Mock response - in production this would come from your AI model API
-      const mockResult: AssessmentResult = {
-        supplier_id: supplierID,
-        risk_score: Math.floor(Math.random() * 100),
-        decision_analysis: `Based on our assessment of supplier ${supplierID}, we have analyzed multiple risk factors including financial stability, compliance history, and delivery reliability.\n\nThe supplier has demonstrated adequate capabilities to meet the specified needs, however there are some areas that require monitoring.\n\nWe recommend proceeding with this supplier with appropriate risk mitigation measures in place.`,
-        AI_decision: Math.random() > 0.5 ? "Qualified with conditions" : "Requires additional review",
-        metrics: [
-          {
-            name: "Financial Stability",
-            value: Math.floor(Math.random() * 100) + "%",
-            description: "Assessment of supplier's financial health and stability"
-          },
-          {
-            name: "Compliance Score",
-            value: Math.floor(Math.random() * 100) + "%",
-            description: "Regulatory and industry compliance rating"
-          },
-          {
-            name: "Delivery Reliability",
-            value: Math.floor(Math.random() * 100) + "%", 
-            description: "Historical on-time delivery performance"
-          },
-          {
-            name: "Quality Rating",
-            value: Math.floor(Math.random() * 5) + "/5",
-            description: "Product/service quality assessment"
-          }
-        ]
-      };
-
-      setResult(mockResult);
+      if (!response.ok) {
+        throw new Error('API request failed');
+      }
+      
+      const result = await response.json();
+      setResult(result);
       toast.success("Assessment generated successfully");
     } catch (error) {
       console.error("Error generating assessment:", error);
@@ -71,6 +51,7 @@ const Index = () => {
       setIsLoading(false);
     }
   };
+      
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
